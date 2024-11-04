@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1 class="text-2xl font-bold mb-4">Top 10 nejlépe hodnocených yetti</h1>
+	<div class="space-y-4">
+		{% for person in top10 %}
+			<div class="bg-white p-4 rounded shadow-md">
+				<p><strong>Jméno:</strong> {{ person[0].firstName }}</p>
+				<p><strong>Příjmení:</strong> {{ person[0].lastName }}</p>
+				<p><strong>Pohlaví:</strong> {{ getSexLabel(person[0].sex) }}</p>
+				<p><strong>Bydliště:</strong> {{ person[0].address }}</p>
+				<p><strong>Výška:</strong> {{ person[0].height }}</p>
+				<p><strong>Váha:</strong> {{ person[0].weight }}</p>
+				<p><strong>Hodnocení:</strong> {{ person.rating|number_format(2) }}</p>
+				<p><strong>Líbí se:</strong> {{ person.likes }}</p>
+				<p><strong>Nelíbí se:</strong> {{ person.dislikes }}</p>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="max-w-xl mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
+		<h2 class="text-2xl font-bold mb-4 text-center">Detail yetiho</h2>
+		<div class="text-gray-700">
+			<p><strong>Jméno:</strong> {{ person.firstName }}</p>
+			<p><strong>Příjmení:</strong> {{ person.lastName }}</p>
+			<p><strong>Pohlaví:</strong> {{ person.sex == 1 ? 'Muž' : 'Žena' }}</p>
+			<p><strong>Bydliště:</strong> {{ person.address }}</p>
+			<p><strong>Výška:</strong> {{ person.height }} cm</p>
+			<p><strong>Váha:</strong> {{ person.weight }} kg</p>
+		</div>
+
+		<div class="flex justify-center gap-4 mt-6">
+			<a href="{{ path('yetinder_rate', { id: person.id, like: 1 }) }}" 
+				class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300">
+				Líbí se
+			</a>
+			<a href="{{ path('yetinder_rate', { id: person.id, like: 0 }) }}" 
+				class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">
+				Nelíbí se
+			</a>
+		</div>
+	</div>
+{% endblock %}
