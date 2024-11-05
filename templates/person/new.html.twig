@@ -3,7 +3,7 @@
 {% block body %}
 <div class="text-left max-w-md mx-auto">
 	<h2 class="text-2xl font-bold text-gray-800 mb-6">Přidat nového Yettiho</h2>
-	<form action="{{ path('person_add') }}" method="POST" class="space-y-4 bg-white p-6 rounded shadow-md">
+	<form action="{{ path('person_add') }}" method="POST" class="space-y-4 bg-white p-6 rounded-lg shadow-md">
 		<div class="flex flex-col">
 			<label for="first_name" class="text-gray-700 font-semibold">Jméno:</label>
 			<input type="text" id="first_name" name="first_name" required

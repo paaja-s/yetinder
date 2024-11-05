@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<div class="text-left max-w-md mx-auto">
 	<h1 class="text-2xl font-bold mb-4">Top 10 nejlépe hodnocených yetti</h1>
 	<div class="space-y-4">
 		{% for person in top10 %}
-			<div class="bg-white p-4 rounded shadow-md">
+			
+			<div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 my-4">
 				<p><strong>Jméno:</strong> {{ person[0].firstName }}</p>
 				<p><strong>Příjmení:</strong> {{ person[0].lastName }}</p>
 				<p><strong>Pohlaví:</strong> {{ getSexLabel(person[0].sex) }}</p>
@@ -17,4 +19,5 @@
 			</div>
 		{% endfor %}
 	</div>
+</div>
 {% endblock %}
