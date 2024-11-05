@@ -27,66 +27,43 @@
 		</label>
 		<button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Filtrovat</button>
 	</form>
-
-	<h2 class="text-xl font-semibold mb-4">Roční statistiky pro {{ selectedYear }}</h2>
-	<table class="table-auto w-full mb-8">
-		<thead>
-			<tr>
-				<th class="px-4 py-2">Jméno</th>
-				<th class="px-4 py-2">Líbí se</th>
-				<th class="px-4 py-2">Nelíbí se</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for stat in yearStats %}
+	
+	<div class="overflow-x-auto">
+		<table class="min-w-full bg-white shadow-lg rounded-lg">
+			<thead>
 				<tr>
-					<td class="border px-4 py-2">{{ stat.first_name }} {{ stat.last_name }}</td>
-					<td class="border px-4 py-2">{{ stat.likes }}</td>
-					<td class="border px-4 py-2">{{ stat.dislikes }}</td>
+					<th class="px-4 py-2 border-b text-left">Jméno</th>
+					<th class="px-4 py-2 border-b text-left">Příjmení</th>
+					<th class="px-4 py-2 border-b text-center">Roční hodnocení {{ selectedYear }}</th>
+					<th class="px-4 py-2 border-b text-center">Měsíční hodnocení {{ selectedYear }}/{{ selectedMonth }}</th>
+					<th class="px-4 py-2 border-b text-center">Denní hodnocení {{ selectedYear }}/{{ selectedMonth }}/{{ selectedDay }}</th>
 				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	<h2 class="text-xl font-semibold mb-4">Měsíční statistiky pro {{ selectedYear }}/{{ selectedMonth }}</h2>
-	<table class="table-auto w-full mb-8">
-		<thead>
-			<tr>
-				<th class="px-4 py-2">Jméno</th>
-				<th class="px-4 py-2">Líbí se</th>
-				<th class="px-4 py-2">Nelíbí se</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for stat in monthStats %}
-				<tr>
-					<td class="border px-4 py-2">{{ stat.first_name }} {{ stat.last_name }}</td>
-					<td class="border px-4 py-2">{{ stat.likes }}</td>
-					<td class="border px-4 py-2">{{ stat.dislikes }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	<h2 class="text-xl font-semibold mb-4">Denní statistiky pro {{ selectedYear }}/{{ selectedMonth }}/{{ selectedDay }}</h2>
-	<table class="table-auto w-full">
-		<thead>
-			<tr>
-				<th class="px-4 py-2">Jméno</th>
-				<th class="px-4 py-2">Líbí se</th>
-				<th class="px-4 py-2">Nelíbí se</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for stat in dayStats %}
-				<tr>
-					<td class="border px-4 py-2">{{ stat.first_name }} {{ stat.last_name }}</td>
-					<td class="border px-4 py-2">{{ stat.likes }}</td>
-					<td class="border px-4 py-2">{{ stat.dislikes }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+			</thead>
+			<tbody>
+				{% for person in statistics %}
+					<tr>
+						<td class="px-4 py-2 border-b">{{ person[0].firstName }}</td>
+						<td class="px-4 py-2 border-b">{{ person[0].lastName }}</td>
+						<td class="px-4 py-2 border-b text-center">
+							<span class="text-green-600 font-bold">{{ person.yearly[0].likes }}</span> / 
+							<span class="text-red-600 font-bold">{{ person.yearly[0].dislikes }}</span>
+						</td>
+						<td class="px-4 py-2 border-b text-center">
+							<span class="text-green-600 font-bold">{{ person.monthly[0].likes }}</span> / 
+							<span class="text-red-600 font-bold">{{ person.monthly[0].dislikes }}</span>
+						</td>
+						<td class="px-4 py-2 border-b text-center">
+							<span class="text-green-600 font-bold">{{ person.daily[0].likes }}</span> / 
+							<span class="text-red-600 font-bold">{{ person.daily[0].dislikes }}</span>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="5" class="px-4 py-2 text-center text-gray-500">Žádná data k zobrazení</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 	</div>
 </div>
 {% endblock %}

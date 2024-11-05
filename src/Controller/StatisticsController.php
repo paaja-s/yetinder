@@ -6,9 +6,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\PersonRepository;
 
 class StatisticsController extends AbstractController
 {
+	public function __construct(PersonRepository $personRepository)
+	{
+		$this->personRepository = $personRepository;
+	}
+	
 	#[Route('/statistics', name: 'statistics')]
 	public function index(Request $request, EntityManagerInterface $entityManager): Response
 	{
@@ -23,9 +29,7 @@ class StatisticsController extends AbstractController
 		$dayStats = $this->getStatsByDay($entityManager, $year, $month, $day);
 		
 		return $this->render('statistics/index.html.twig', [
-			'yearStats' => $yearStats,
-			'monthStats' => $monthStats,
-			'dayStats' => $dayStats,
+			'statistics' => $this->combineStatistics($yearStats, $monthStats, $dayStats),
 			'selectedYear' => $year,
 			'selectedMonth' => $month,
 			'selectedDay' => $day,
@@ -34,7 +38,7 @@ class StatisticsController extends AbstractController
 	
 	private function getStatsByYear(EntityManagerInterface $entityManager,int $year)
 	{
-		$sql = 'SELECT p.first_name, p.last_name,
+		$sql = 'SELECT p.id,
 							SUM(CASE WHEN s.assessment = 1 THEN 1 ELSE 0 END) as likes,
 							SUM(CASE WHEN s.assessment = 0 THEN 1 ELSE 0 END) as dislikes
 						FROM statistic s
@@ -44,12 +48,12 @@ class StatisticsController extends AbstractController
 		$stmt = $entityManager->getConnection()->prepare($sql);
 		return $stmt->executeQuery([
 			'year' => (string)$year
-		])->fetchAllAssociative();
+		])->fetchAllAssociativeIndexed();
 	}
 	
 	private function getStatsByMonth(EntityManagerInterface $entityManager,int $year, int $month)
 	{
-		$sql = 'SELECT p.first_name, p.last_name,
+		$sql = 'SELECT p.id,
 							SUM(CASE WHEN s.assessment = 1 THEN 1 ELSE 0 END) as likes,
 							SUM(CASE WHEN s.assessment = 0 THEN 1 ELSE 0 END) as dislikes
 						FROM statistic s
@@ -61,12 +65,12 @@ class StatisticsController extends AbstractController
 		return $stmt->executeQuery([
 			'year' => (string)$year,
 			'month' => sprintf("%02d", $month)
-		])->fetchAllAssociative();
+		])->fetchAllAssociativeIndexed();
 	}
 	
 	private function getStatsByDay(EntityManagerInterface $entityManager,int $year, int $month, int $day)
 	{
-		$sql = 'SELECT p.first_name, p.last_name,
+		$sql = 'SELECT p.id,
 							SUM(CASE WHEN s.assessment = 1 THEN 1 ELSE 0 END) as likes,
 							SUM(CASE WHEN s.assessment = 0 THEN 1 ELSE 0 END) as dislikes
 						FROM statistic s
@@ -79,6 +83,30 @@ class StatisticsController extends AbstractController
 			'year' => (string)$year,
 			'month' => sprintf("%02d", $month),
 			'day' => sprintf("%02d", $day)
-		])->fetchAllAssociative();
+		])->fetchAllAssociativeIndexed();
+	}
+	
+	/**
+	 * Sestaveni pole statistiky, indexovane person.id obsahujici Person a rocni, mesicni a denni statistiku
+	 * @param array $yearly
+	 * @param array $monthly
+	 * @param array $daily
+	 * @return array
+	 */
+	function combineStatistics(array $yearly, array $monthly, array $daily): array
+	{
+		$combined = [];
+		$empty = ['likes'=>0,'dislikes'=>0];
+		$allPersons = $this->personRepository->findAll();
+		
+		foreach($allPersons as $person){
+			$id = $person->getId();
+			$combined[$id] = [$person];
+			$combined[$id]['yearly'] = [isset($yearly[$id])?$yearly[$id]:$empty];
+			$combined[$id]['monthly'] = [isset($monthly[$id])?$monthly[$id]:$empty];
+			$combined[$id]['daily'] = [isset($daily[$id])?$daily[$id]:$empty];
+		}
+		
+		return $combined;
 	}
 }
